@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: gym_tracker-dev
+    init: true
+    depends_on: 
+      db:
+        condition: service_healthy
+    tty: true
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/rails
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/gym_trackr_development
+    networks:
+      - gym_trackr_network
+
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: gym_trackr_development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    networks:
+      - gym_trackr_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  gym_trackr_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
