@@ -36,6 +36,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    ports:
+      - "5432:5432"
 
 networks:
   gym_trackr_network:
