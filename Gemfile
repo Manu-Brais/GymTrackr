@@ -8,6 +8,9 @@ gem "rails", "~> 7.1.3", ">= 7.1.3.2"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
+# Graphql support
+gem "graphql"
+
 # Use sqlite3 as the database for Active Record
 # gem "sqlite3", "~> 1.4"
 gem "pg"
@@ -28,3 +31,4 @@ group :development do
   # gem "spring"
 end
 
+gem "graphiql-rails", group: :development
