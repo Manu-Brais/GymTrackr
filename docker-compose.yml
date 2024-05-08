@@ -1,12 +1,12 @@
 version: '3.8'
 services:
   app:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     image: gym_tracker-dev
     init: true
-    depends_on: 
+    depends_on:
       db:
         condition: service_healthy
     tty: true
