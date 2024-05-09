@@ -6,20 +6,20 @@ gem "bcrypt"
 gem "graphql"
 gem "pg"
 gem "puma", ">= 5.0"
-gem "sprockets-rails"
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "propshaft"
+gem "tzinfo-data", platforms: %i[windows jruby]
 
 group :development do
   gem "graphiql-rails"
 end
 
 group :test do
-  gem "faker"
   gem "rspec"
   gem "rspec-rails"
 end
 
 group :development, :test do
-  gem "debug", platforms: %i[ mri windows ]
+  gem "debug", platforms: %i[mri windows]
+  gem "faker"
+  gem "standard"
 end
-
