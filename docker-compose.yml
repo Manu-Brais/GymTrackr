@@ -39,9 +39,25 @@ services:
     ports:
       - "5432:5432"
 
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: gym@trackr.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - gym_trackr_network
+
 networks:
   gym_trackr_network:
     driver: bridge
 
 volumes:
   postgres_data:
+  pgadmin_data:
