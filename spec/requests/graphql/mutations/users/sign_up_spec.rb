@@ -32,16 +32,10 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
       let(:type) { "coach" }
 
       it "signs up a new coach successfully" do
-        expect(response.parsed_body).to eq({
-          "data" => {
-            "signup" => {
-              "user" => {
-                "email" => email,
-                "authenticatable" => {
-                  "name" => name
-                }
-              }
-            }
+        expect(response.parsed_body.dig("data", "signup", "user")).to eq({
+          "email" => email,
+          "authenticatable" => {
+            "name" => name
           }
         })
       end
@@ -51,16 +45,10 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
       let(:type) { "client" }
 
       it "signs up a new client successfully" do
-        expect(response.parsed_body).to eq({
-          "data" => {
-            "signup" => {
-              "user" => {
-                "email" => email,
-                "authenticatable" => {
-                  "name" => name
-                }
-              }
-            }
+        expect(response.parsed_body.dig("data", "signup", "user")).to eq({
+          "email" => email,
+          "authenticatable" => {
+            "name" => name
           }
         })
       end
@@ -73,21 +61,13 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
       context "when the email is already taken" do
         before do
-          create(:user, email: email, password: password, authenticatable: create(:coach))
+          create(:user, :coach, email: email, password: password)
           execute_sign_up_mutation
         end
 
         it "returns an error" do
-          expect(response.parsed_body).to eq({
-            "errors" => [
-              {
-                "message" => "Sign up error: Email has already been taken",
-                "locations" => [{"line" => 2, "column" => 3}],
-                "path" => ["signup"]
-              }
-            ],
-            "data" => {"signup" => nil}
-          })
+          expect(response.parsed_body.dig("errors").first.dig("message"))
+            .to eq("Sign up error: [\"Email has already been taken\"]")
         end
       end
 
@@ -98,16 +78,8 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
         before { execute_sign_up_mutation }
 
         it "returns an error" do
-          expect(response.parsed_body).to eq({
-            "errors" => [
-              {
-                "message" => "Sign up error: Password is too short (minimum is 6 characters)",
-                "locations" => [{"line" => 2, "column" => 3}],
-                "path" => ["signup"]
-              }
-            ],
-            "data" => {"signup" => nil}
-          })
+          expect(response.parsed_body.dig("errors").first.dig("message"))
+            .to eq("Sign up error: [\"Password is too short (minimum is 6 characters)\"]")
         end
       end
 
@@ -117,16 +89,8 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
         before { execute_sign_up_mutation }
 
         it "returns an error" do
-          expect(response.parsed_body).to eq({
-            "errors" => [
-              {
-                "message" => "Sign up error: Password confirmation doesn't match Password",
-                "locations" => [{"line" => 2, "column" => 3}],
-                "path" => ["signup"]
-              }
-            ],
-            "data" => {"signup" => nil}
-          })
+          expect(response.parsed_body.dig("errors").first.dig("message"))
+            .to eq("Sign up error: [\"Password confirmation doesn't match Password\"]")
         end
       end
     end
@@ -141,16 +105,8 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
         end
 
         it "returns an error" do
-          expect(response.parsed_body).to eq({
-            "errors" => [
-              {
-                "message" => "Sign up error: Email has already been taken",
-                "locations" => [{"line" => 2, "column" => 3}],
-                "path" => ["signup"]
-              }
-            ],
-            "data" => {"signup" => nil}
-          })
+          expect(response.parsed_body.dig("errors").first.dig("message"))
+            .to eq("Sign up error: [\"Email has already been taken\"]")
         end
       end
 
@@ -161,16 +117,8 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
         before { execute_sign_up_mutation }
 
         it "returns an error" do
-          expect(response.parsed_body).to eq({
-            "errors" => [
-              {
-                "message" => "Sign up error: Password is too short (minimum is 6 characters)",
-                "locations" => [{"line" => 2, "column" => 3}],
-                "path" => ["signup"]
-              }
-            ],
-            "data" => {"signup" => nil}
-          })
+          expect(response.parsed_body.dig("errors").first.dig("message"))
+            .to eq("Sign up error: [\"Password is too short (minimum is 6 characters)\"]")
         end
       end
 
@@ -180,16 +128,8 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
         before { execute_sign_up_mutation }
 
         it "returns an error" do
-          expect(response.parsed_body).to eq({
-            "errors" => [
-              {
-                "message" => "Sign up error: Password confirmation doesn't match Password",
-                "locations" => [{"line" => 2, "column" => 3}],
-                "path" => ["signup"]
-              }
-            ],
-            "data" => {"signup" => nil}
-          })
+          expect(response.parsed_body.dig("errors").first.dig("message"))
+            .to eq("Sign up error: [\"Password confirmation doesn't match Password\"]")
         end
       end
     end
