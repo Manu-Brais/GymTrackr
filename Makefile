@@ -6,6 +6,11 @@ install:
 	bundle exec rails db:create && \
 	bundle exec rails db:migrate && \
 	bundle exec rails db:seed"
+	docker compose run --rm app_test bash -c "\
+	bundle install && \
+	bundle exec rails db:drop && \
+	bundle exec rails db:create && \
+	bundle exec rails db:migrate
 
 .PHONY: bundle
 bundle:
@@ -17,7 +22,6 @@ console:
 
 .PHONY: server
 server:
-	rm -f rails/tmp/pids/server.pid
 	docker compose up app
 
 .PHONY: db.migrate
@@ -51,5 +55,9 @@ bash:
 
 .PHONY: test
 test:
-	docker compose run --rm app bundle exec rspec
+	docker compose run --rm app_test bundle exec rspec
+
+.PHONY: test.session
+test.session:
+	docker compose run --rm app_test bash
 

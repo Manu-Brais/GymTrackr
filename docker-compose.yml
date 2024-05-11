@@ -10,7 +10,7 @@ services:
       db:
         condition: service_healthy
     tty: true
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    command: 'bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b 0.0.0.0"'
     volumes:
       - .:/rails
       - bundle_data:/usr/local/bundle
@@ -40,6 +40,46 @@ services:
     ports:
       - "5432:5432"
 
+  app_test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gym_tracker-test
+    init: true
+    depends_on:
+      db_test:
+        condition: service_healthy
+    tty: true
+    command: bundle exec rails s -p 3001 -b '0.0.0.0'
+    volumes:
+      - .:/rails
+      - bundle_data_test:/usr/local/bundle
+    ports:
+      - "3001:3000"
+    environment:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:password@db:5432/gym_trackr_test
+    networks:
+      - gym_trackr_network
+
+  db_test:
+    image: postgres:latest
+    volumes:
+      - postgres_data_test:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: gym_trackr_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    networks:
+      - gym_trackr_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "5433:5432"
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4_container
@@ -60,5 +100,7 @@ networks:
 
 volumes:
   postgres_data:
+  postgres_data_test:
   pgadmin_data:
   bundle_data:
+  bundle_data_test:

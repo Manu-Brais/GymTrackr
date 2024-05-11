@@ -11,7 +11,6 @@ module Mutations
       argument :type, String, required: true
 
       field :user, Types::UserType, null: true
-      field :errors, [String], null: true
 
       def resolve(name:, surname:, phone:, address:, email:, password:, password_confirmation:, type:)
         authenticatable = set_authenticatable(name, surname, phone, address, type)
@@ -24,11 +23,9 @@ module Mutations
           authenticatable: authenticatable
         )
 
-        if user.save
-          {user: user, errors: nil}
-        else
-          {user: nil, errors: user.errors.full_messages}
-        end
+        raise Errors::SignUpError.new(user.errors.full_messages.join(", ")) unless user.save
+
+        { user: user }
       end
 
       private
