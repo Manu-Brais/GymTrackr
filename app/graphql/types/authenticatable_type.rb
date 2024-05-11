@@ -4,12 +4,12 @@ module Types
 
     def self.resolve_type(object, context)
       case object
-      when Coach
+      when ::Coach
         Types::CoachType
-      when Student
+      when ::Client
         Types::ClientType
       else
-        raise "Unknown type for Authenticatable: #{object}"
+        raise Errors::SignUpError.new("Unknown type for Authenticatable: #{object}")
       end
     end
   end
