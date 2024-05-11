@@ -73,13 +73,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
       context "when the email is already taken" do
         before do
-          User.create!(
-            email: email,
-            password: password,
-            password_confirmation: password_confirmation,
-            authenticatable: Coach.new(name: name,surname: surname,phone: phone,address: address)
-          )
-
+          create(:user, email: email, password: password, authenticatable: create(:coach))
           execute_sign_up_mutation
         end
 
@@ -142,13 +136,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
       context "when the email is already taken" do
         before do
-          User.create!(
-            email: email,
-            password: password,
-            password_confirmation: password_confirmation,
-            authenticatable: Client.new(name: name,surname: surname,phone: phone,address: address)
-          )
-
+          create(:user, email: email, password: password, authenticatable: create(:client))
           execute_sign_up_mutation
         end
 
