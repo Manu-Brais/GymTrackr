@@ -1,11 +1,6 @@
 module Mutations
   module Authentication
     class SignUp < BaseMutation
-      # type Types::SignupResult, null: false
-
-      field :user, Types::UserType, null: true
-      field :errors, [String], null: true
-
       argument :name, String, required: true
       argument :surname, String, required: true
       argument :phone, String, required: true
@@ -15,8 +10,13 @@ module Mutations
       argument :password_confirmation, String, required: true
       argument :type, String, required: true
 
+      field :user, Types::UserType, null: true
+      field :errors, [String], null: true
+
       def resolve(name:, surname:, phone:, address:, email:, password:, password_confirmation:, type:)
         authenticatable = set_authenticatable(name, surname, phone, address, type)
+        return {user: nil, errors: authenticatable.errors.full_messages} unless authenticatable.valid?
+
         user = User.new(
           email: email,
           password: password,
@@ -25,15 +25,9 @@ module Mutations
         )
 
         if user.save
-          {
-            user: user,
-            errors: nil
-          }
+          {user: user, errors: nil}
         else
-          {
-            user: nil,
-            errors: user.errors.full_messages
-          }
+          {user: nil, errors: user.errors.full_messages}
         end
       end
 
@@ -45,6 +39,8 @@ module Mutations
           Coach.new(name: name, surname: surname, phone: phone, address: address)
         when "client"
           Client.new(name: name, surname: surname, phone: phone, address: address)
+        else
+          raise GraphQL::ExecutionError, "Invalid Authenticatable type, valid types: coach, client"
         end
       end
     end

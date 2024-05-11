@@ -4,6 +4,7 @@ gem "rails", "~> 7.1.3", ">= 7.1.3.2"
 
 gem "bcrypt"
 gem "graphql"
+gem "jwt"
 gem "pg"
 gem "puma", ">= 5.0"
 gem "propshaft"

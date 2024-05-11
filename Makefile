@@ -17,6 +17,7 @@ console:
 
 .PHONY: server
 server:
+	rm -f rails/tmp/pids/server.pid
 	docker compose up app
 
 .PHONY: db.migrate

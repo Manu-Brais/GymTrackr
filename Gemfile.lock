@@ -105,6 +105,8 @@ GEM
       rdoc
       reline (>= 0.4.2)
     json (2.7.2)
+    jwt (2.8.1)
+      base64
     language_server-protocol (3.17.0.3)
     lint_roller (1.1.0)
     loofah (2.22.0)
@@ -277,6 +279,7 @@ DEPENDENCIES
   faker
   graphiql-rails
   graphql
+  jwt
   pg
   propshaft
   puma (>= 5.0)

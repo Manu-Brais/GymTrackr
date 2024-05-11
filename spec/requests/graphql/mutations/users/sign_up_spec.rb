@@ -4,19 +4,30 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
     <<~QUERY
       mutation signup(
         $email: String!,
+        $type: String!
+        $name: String!
+        $surname: String!
+        $phone: String!
+        $address: String!
         $password: String!,
         $password_confirmation: String!,
-        $name: String!) {
+        ) {
         signup(
           input: {
+            name: $name,
+            surname: $surname,
+            phone: $phone,
+            address: $address,
+            type: $type,
             email: $email,
             password: $password,
             passwordConfirmation: $password_confirmation,
-            name: $name,
           }
         ) {
-          email
-          token
+          user {
+            email
+          }
+          errors
         }
       }
     QUERY
@@ -26,10 +37,14 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
     post "/graphql", params: {
       query: query,
       variables: {
-        email: "test@example.com",
-        password: "SecurePassword1",
-        password_confirmation: "SecurePassword1",
-        name: "Test User"
+        name: "Antonio",
+        surname: "Martinez",
+        phone: "987654321",
+        address: "C/ Milladoiro",
+        type: "pepe",
+        email: "pepe21@gmail.com",
+        password: "password",
+        passwordConfirmation: "password"
       }
     }
     debugger
