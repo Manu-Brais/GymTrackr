@@ -25,7 +25,7 @@ module Mutations
 
         raise Errors::SignUpError.new(user.errors.full_messages.join(", ")) unless user.save
 
-        { user: user }
+        {user: user}
       end
 
       private

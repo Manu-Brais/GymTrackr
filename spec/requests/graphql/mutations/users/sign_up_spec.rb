@@ -1,7 +1,6 @@
 require "spec_helper"
 
 RSpec.describe "GraphQL, signUp mutation", type: :request do
-
   subject(:execute_sign_up_mutation) do
     post "/graphql", params: {
       query: mutation(
@@ -12,8 +11,9 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
         type: type,
         email: email,
         password: password,
-        password_confirmation: password_confirmation)
-      }
+        password_confirmation: password_confirmation
+      )
+    }
   end
 
   let(:name) { "John" }
@@ -82,11 +82,11 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             "errors" => [
               {
                 "message" => "Sign up error: Email has already been taken",
-                "locations" => [{ "line" => 2, "column" => 3 }],
+                "locations" => [{"line" => 2, "column" => 3}],
                 "path" => ["signup"]
               }
             ],
-            "data" => { "signup" => nil }
+            "data" => {"signup" => nil}
           })
         end
       end
@@ -102,11 +102,11 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             "errors" => [
               {
                 "message" => "Sign up error: Password is too short (minimum is 6 characters)",
-                "locations" => [{ "line" => 2, "column" => 3 }],
+                "locations" => [{"line" => 2, "column" => 3}],
                 "path" => ["signup"]
               }
             ],
-            "data" => { "signup" => nil }
+            "data" => {"signup" => nil}
           })
         end
       end
@@ -121,11 +121,11 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             "errors" => [
               {
                 "message" => "Sign up error: Password confirmation doesn't match Password",
-                "locations" => [{ "line" => 2, "column" => 3 }],
+                "locations" => [{"line" => 2, "column" => 3}],
                 "path" => ["signup"]
               }
             ],
-            "data" => { "signup" => nil }
+            "data" => {"signup" => nil}
           })
         end
       end
@@ -145,11 +145,11 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             "errors" => [
               {
                 "message" => "Sign up error: Email has already been taken",
-                "locations" => [{ "line" => 2, "column" => 3 }],
+                "locations" => [{"line" => 2, "column" => 3}],
                 "path" => ["signup"]
               }
             ],
-            "data" => { "signup" => nil }
+            "data" => {"signup" => nil}
           })
         end
       end
@@ -165,11 +165,11 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             "errors" => [
               {
                 "message" => "Sign up error: Password is too short (minimum is 6 characters)",
-                "locations" => [{ "line" => 2, "column" => 3 }],
+                "locations" => [{"line" => 2, "column" => 3}],
                 "path" => ["signup"]
               }
             ],
-            "data" => { "signup" => nil }
+            "data" => {"signup" => nil}
           })
         end
       end
@@ -184,11 +184,11 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             "errors" => [
               {
                 "message" => "Sign up error: Password confirmation doesn't match Password",
-                "locations" => [{ "line" => 2, "column" => 3 }],
+                "locations" => [{"line" => 2, "column" => 3}],
                 "path" => ["signup"]
               }
             ],
-            "data" => { "signup" => nil }
+            "data" => {"signup" => nil}
           })
         end
       end
