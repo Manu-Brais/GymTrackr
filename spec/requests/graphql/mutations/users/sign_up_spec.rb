@@ -1,27 +1,209 @@
-require "rails_helper"
+require "spec_helper"
+
 RSpec.describe "GraphQL, signUp mutation", type: :request do
+
+  subject(:execute_sign_up_mutation) do
+    post "/graphql", params: {
+      query: mutation(
+        name: name,
+        surname: surname,
+        phone: phone,
+        address: address,
+        type: type,
+        email: email,
+        password: password,
+        password_confirmation: password_confirmation)
+      }
+  end
+
+  let(:name) { "John" }
+  let(:surname) { "Doe" }
+  let(:phone) { "123456789" }
+  let(:address) { "1234 Main St" }
+  let(:type) { "coach" }
+  let(:email) { "john@doe.com" }
+  let(:password) { "password" }
+  let(:password_confirmation) { "password" }
+
   context "happy path" do
+    before { execute_sign_up_mutation }
+
     context "when the user is a coach" do
+      let(:type) { "coach" }
+
       it "signs up a new coach successfully" do
-        post "/graphql", params: { query: query_string, variables: variables }, headers: headers
+        expect(response.parsed_body).to eq({
+          "data" => {
+            "signup" => {
+              "user" => {
+                "email" => email,
+                "authenticatable" => {
+                  "name" => name
+                }
+              }
+            }
+          }
+        })
       end
     end
 
     context "when the user is a client" do
-      it "signs up a new client successfully"
+      let(:type) { "client" }
+
+      it "signs up a new client successfully" do
+        expect(response.parsed_body).to eq({
+          "data" => {
+            "signup" => {
+              "user" => {
+                "email" => email,
+                "authenticatable" => {
+                  "name" => name
+                }
+              }
+            }
+          }
+        })
+      end
     end
   end
 
   context "unhappy path" do
     context "when the user is a coach" do
-      context "when the email is already taken"
-      context "when the password is too short"
-      context "when the password confirmation does not match the password"
+      let(:type) { "coach" }
+
+      context "when the email is already taken" do
+        before do
+          User.create!(
+            email: email,
+            password: password,
+            password_confirmation: password_confirmation,
+            authenticatable: Coach.new(name: name,surname: surname,phone: phone,address: address)
+          )
+
+          execute_sign_up_mutation
+        end
+
+        it "returns an error" do
+          expect(response.parsed_body).to eq({
+            "errors" => [
+              {
+                "message" => "Sign up error: Email has already been taken",
+                "locations" => [{ "line" => 2, "column" => 3 }],
+                "path" => ["signup"]
+              }
+            ],
+            "data" => { "signup" => nil }
+          })
+        end
+      end
+
+      context "when the password is too short" do
+        let(:password) { "pass" }
+        let(:password_confirmation) { "pass" }
+
+        before { execute_sign_up_mutation }
+
+        it "returns an error" do
+          expect(response.parsed_body).to eq({
+            "errors" => [
+              {
+                "message" => "Sign up error: Password is too short (minimum is 6 characters)",
+                "locations" => [{ "line" => 2, "column" => 3 }],
+                "path" => ["signup"]
+              }
+            ],
+            "data" => { "signup" => nil }
+          })
+        end
+      end
+
+      context "when the password confirmation does not match the password" do
+        let(:password_confirmation) { "password123" }
+
+        before { execute_sign_up_mutation }
+
+        it "returns an error" do
+          expect(response.parsed_body).to eq({
+            "errors" => [
+              {
+                "message" => "Sign up error: Password confirmation doesn't match Password",
+                "locations" => [{ "line" => 2, "column" => 3 }],
+                "path" => ["signup"]
+              }
+            ],
+            "data" => { "signup" => nil }
+          })
+        end
+      end
     end
+
     context "when the user is a client" do
-      context "when the email is already taken"
-      context "when the password is too short"
-      context "when the password confirmation does not match the password"
+      let(:type) { "client" }
+
+      context "when the email is already taken" do
+        before do
+          User.create!(
+            email: email,
+            password: password,
+            password_confirmation: password_confirmation,
+            authenticatable: Client.new(name: name,surname: surname,phone: phone,address: address)
+          )
+
+          execute_sign_up_mutation
+        end
+
+        it "returns an error" do
+          expect(response.parsed_body).to eq({
+            "errors" => [
+              {
+                "message" => "Sign up error: Email has already been taken",
+                "locations" => [{ "line" => 2, "column" => 3 }],
+                "path" => ["signup"]
+              }
+            ],
+            "data" => { "signup" => nil }
+          })
+        end
+      end
+
+      context "when the password is too short" do
+        let(:password) { "pass" }
+        let(:password_confirmation) { "pass" }
+
+        before { execute_sign_up_mutation }
+
+        it "returns an error" do
+          expect(response.parsed_body).to eq({
+            "errors" => [
+              {
+                "message" => "Sign up error: Password is too short (minimum is 6 characters)",
+                "locations" => [{ "line" => 2, "column" => 3 }],
+                "path" => ["signup"]
+              }
+            ],
+            "data" => { "signup" => nil }
+          })
+        end
+      end
+
+      context "when the password confirmation does not match the password" do
+        let(:password_confirmation) { "password123" }
+
+        before { execute_sign_up_mutation }
+
+        it "returns an error" do
+          expect(response.parsed_body).to eq({
+            "errors" => [
+              {
+                "message" => "Sign up error: Password confirmation doesn't match Password",
+                "locations" => [{ "line" => 2, "column" => 3 }],
+                "path" => ["signup"]
+              }
+            ],
+            "data" => { "signup" => nil }
+          })
+        end
+      end
     end
   end
 
@@ -41,8 +223,15 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
           }) {
             user {
               email
-            }
-            errors
+              authenticatable {
+                ... on Coach {
+                  name
+                }
+                ... on Client {
+                  name
+                }
+              }
+           }
         }
       }
     GQL
