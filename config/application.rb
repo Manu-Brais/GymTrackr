@@ -38,6 +38,6 @@ module GymTrackr
 
     # Don't generate system test files.
     config.generators.system_tests = nil
-    config.generatos.test_framework :rspec
+    config.generators.test_framework :rspec
   end
 end
