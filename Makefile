@@ -15,6 +15,7 @@ install:
 .PHONY: bundle
 bundle:
 	docker compose run --rm app bundle install
+	docker compose run --rm app_test bundle install
 
 .PHONY: console
 console:

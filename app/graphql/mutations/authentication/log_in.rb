@@ -19,9 +19,7 @@ module Mutations
       private
 
       def generate_token(user)
-        ecdsa_key = OpenSSL::PKey::EC.generate("prime256v1")
-        payload = {data: user.email}
-        JWT.encode(payload, ecdsa_key, "ES256")
+        ::Authentication::JwtToken::CreateService.call(user)
       end
     end
   end
