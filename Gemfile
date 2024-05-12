@@ -3,6 +3,7 @@ ruby "3.3.0"
 gem "rails", "~> 7.1.3", ">= 7.1.3.2"
 
 gem "bcrypt"
+gem "dry-monads"
 gem "graphql"
 gem "jwt"
 gem "pg"
