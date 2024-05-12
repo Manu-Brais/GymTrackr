@@ -1,21 +1,22 @@
 require "rails_helper"
 
-RSpec.describe Authentication::JwtToken::CreateService do
-  subject(:service) { described_class.call(user, expiration: expiration) }
+RSpec.describe Authentication::JwtToken::DecoderService do
+  subject(:service) { described_class.call(bearer_token) }
 
   let(:user) { create(:user) }
-  let(:expiration) { 24.hours.from_now.to_i }
+  let!(:bearer_token) { ::Authentication::JwtToken::CreateService.call(user) }
 
   describe "#call" do
     context "when all steps succeed" do
       before do
         allow(File).to receive(:read).and_return("fake_pem_content")
         allow(OpenSSL::PKey::EC).to receive(:new).and_return("fake_ecdsa_key")
-        allow(JWT).to receive(:encode).and_return("fake_jwt_token")
+        allow(JWT).to receive(:decode).with(any_args).and_return([{"user_id" => user.id, "type" => user.authenticatable_type, "exp" => 1000}])
       end
 
-      it "returns the JWT token" do
-        expect(service).to eq("fake_jwt_token")
+      it "returns the decoded payload" do
+        expect(service)
+          .to a_hash_including("user_id" => user.id, "type" => user.authenticatable_type, "exp" => 1000)
       end
     end
 
@@ -42,29 +43,16 @@ RSpec.describe Authentication::JwtToken::CreateService do
       end
     end
 
-    context "when payload generation fails" do
+    context "when token decoding fails" do
       before do
         allow(File).to receive(:read).and_return("fake_pem_content")
         allow(OpenSSL::PKey::EC).to receive(:new).and_return("fake_ecdsa_key")
-        allow(user).to receive(:id).and_raise(StandardError, "unexpected error")
+        allow(JWT).to receive(:decode).and_raise(JWT::DecodeError, "invalid token")
       end
 
       it "returns a Failure monad with the error message" do
         expect(service).to be_failure
-        expect(service.failure).to include("Payload generation failed")
-      end
-    end
-
-    context "when token generation fails" do
-      before do
-        allow(File).to receive(:read).and_return("fake_pem_content")
-        allow(OpenSSL::PKey::EC).to receive(:new).and_return("fake_ecdsa_key")
-        allow(JWT).to receive(:encode).and_raise(JWT::EncodeError, "invalid token")
-      end
-
-      it "returns a Failure monad with the error message" do
-        expect(service).to be_failure
-        expect(service.failure).to include("Token generation failed")
+        expect(service.failure).to include("Token decoding failed")
       end
     end
   end
