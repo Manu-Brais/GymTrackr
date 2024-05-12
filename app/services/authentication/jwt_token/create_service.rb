@@ -14,7 +14,7 @@ module Authentication
         pem_file = yield read_pem_file
         ecdsa_key = yield initialize_ecdsa_key(pem_file)
         payload = yield generate_payload(ecdsa_key)
-        yield generate_token(ecdsa_key, payload)
+        generate_token(ecdsa_key, payload)
       end
 
       private

@@ -15,7 +15,7 @@ RSpec.describe Authentication::JwtToken::CreateService do
       end
 
       it "returns the JWT token" do
-        expect(service).to eq("fake_jwt_token")
+        expect(service.success).to eq("fake_jwt_token")
       end
     end
 

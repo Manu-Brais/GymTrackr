@@ -11,11 +11,14 @@ RSpec.describe Authentication::JwtToken::DecoderService do
       before do
         allow(File).to receive(:read).and_return("fake_pem_content")
         allow(OpenSSL::PKey::EC).to receive(:new).and_return("fake_ecdsa_key")
-        allow(JWT).to receive(:decode).with(any_args).and_return([{"user_id" => user.id, "type" => user.authenticatable_type, "exp" => 1000}])
+        allow(JWT)
+          .to receive(:decode)
+          .with(any_args)
+          .and_return([{"user_id" => user.id, "type" => user.authenticatable_type, "exp" => 1000}])
       end
 
       it "returns the decoded payload" do
-        expect(service)
+        expect(service.success)
           .to a_hash_including("user_id" => user.id, "type" => user.authenticatable_type, "exp" => 1000)
       end
     end

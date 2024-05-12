@@ -1,4 +1,4 @@
-require "spec_helper"
+require "rails_helper"
 
 RSpec.describe "GraphQL, logIn mutation", type: :request do
   subject(:execute_log_in_mutation) do
@@ -17,6 +17,7 @@ RSpec.describe "GraphQL, logIn mutation", type: :request do
     context "when the login is successfully" do
       before do
         create(:user, :coach, email: email, password: password)
+        allow(Authentication::JwtToken::CreateService).to receive(:call).and_return(Dry::Monads::Result::Success.new("token"))
         execute_log_in_mutation
       end
 
