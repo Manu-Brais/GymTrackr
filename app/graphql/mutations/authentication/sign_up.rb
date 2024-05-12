@@ -14,8 +14,7 @@ module Mutations
 
       def resolve(name:, surname:, phone:, address:, email:, password:, password_confirmation:, type:)
         authenticatable = set_authenticatable(name, surname, phone, address, type)
-
-        raise Errors::SignUpError.new(authenticatable.errors.full_messages.join(", ")) unless authenticatable.valid?
+        raise Errors::SignUpError.new(authenticatable.errors.full_messages) unless authenticatable.valid?
 
         user = User.new(
           email: email,
@@ -24,7 +23,7 @@ module Mutations
           authenticatable: authenticatable
         )
 
-        raise Errors::SignUpError.new(user.errors.full_messages.join(", ")) unless user.save
+        raise Errors::SignUpError.new(user.errors.full_messages) unless user.save
 
         {user: user}
       end

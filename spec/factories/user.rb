@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :user do
-    email { "test@email.com" }
+    email { "john@doe.com" }
     password { "password" }
     authenticatable { create(:coach) }
 
