@@ -17,7 +17,8 @@ RSpec.describe "GraphQL, logIn mutation", type: :request do
     context "when the login is successfully" do
       before do
         create(:user, :coach, email: email, password: password)
-        allow(Authentication::JwtToken::CreateService).to receive(:call).and_return(Dry::Monads::Result::Success.new("token"))
+        allow(Authentication::JwtToken::CreateService)
+          .to receive(:call).and_return(Dry::Monads::Result::Success.new("token"))
         execute_log_in_mutation
       end
 
@@ -50,6 +51,20 @@ RSpec.describe "GraphQL, logIn mutation", type: :request do
           execute_log_in_mutation
           expect(response.parsed_body.dig("errors").first.dig("message"))
             .to eq("Log in error: Incorrect email or password")
+        end
+      end
+
+      context "when the token generation fails" do
+        before do
+          create(:user, :coach, email: email, password: password)
+          allow(Authentication::JwtToken::CreateService)
+            .to receive(:call).and_return(Dry::Monads::Result::Failure.new("token error"))
+        end
+
+        it "returns an error" do
+          execute_log_in_mutation
+          expect(response.parsed_body.dig("errors").first.dig("message"))
+            .to eq("Log in error: token error")
         end
       end
     end

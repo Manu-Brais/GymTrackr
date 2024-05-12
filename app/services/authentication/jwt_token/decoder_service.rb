@@ -23,7 +23,7 @@ module Authentication
         Try[Errno::ENOENT] do
           File.read(PEM_FILE_PATH)
         end.to_result.or do |error|
-          Failure("PEM file reading failed: #{error.message}")
+          Failure("PEM file - #{error.message}")
         end
       end
 
@@ -31,7 +31,7 @@ module Authentication
         Try[OpenSSL::PKey::ECError] do
           OpenSSL::PKey::EC.new(pem_file)
         end.to_result.or do |error|
-          Failure("ECDSA key initialization failed: #{error.message}")
+          Failure("ECDSA key - #{error.message}")
         end
       end
 
@@ -39,7 +39,7 @@ module Authentication
         Try[JWT::DecodeError, JWT::ExpiredSignature] do
           JWT.decode(bearer_token, ecdsa_key, true, algorithm: "ES256")[0]
         end.to_result.or do |error|
-          Failure("Token decoding failed: #{error.message}")
+          Failure("JWT - #{error.message}")
         end
       end
     end

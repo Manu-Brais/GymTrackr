@@ -25,12 +25,12 @@ RSpec.describe Authentication::JwtToken::DecoderService do
 
     context "when PEM file reading fails" do
       before do
-        allow(File).to receive(:read).and_raise(Errno::ENOENT, "file not found")
+        allow(File).to receive(:read).and_raise(Errno::ENOENT)
       end
 
       it "returns a Failure monad with the error message" do
         expect(service).to be_failure
-        expect(service.failure).to include("PEM file reading failed")
+        expect(service.failure).to include("PEM file - No such file or directory")
       end
     end
 
@@ -42,7 +42,7 @@ RSpec.describe Authentication::JwtToken::DecoderService do
 
       it "returns a Failure monad with the error message" do
         expect(service).to be_failure
-        expect(service.failure).to include("ECDSA key initialization failed")
+        expect(service.failure).to include("ECDSA key - invalid key")
       end
     end
 
@@ -55,7 +55,7 @@ RSpec.describe Authentication::JwtToken::DecoderService do
 
       it "returns a Failure monad with the error message" do
         expect(service).to be_failure
-        expect(service.failure).to include("Token decoding failed")
+        expect(service.failure).to include("JWT - invalid token")
       end
     end
   end

@@ -26,7 +26,7 @@ RSpec.describe Authentication::JwtToken::CreateService do
 
       it "returns a Failure monad with the error message" do
         expect(service).to be_failure
-        expect(service.failure).to include("PEM file reading failed")
+        expect(service.failure).to include("PEM file - No such file or directory - file not found")
       end
     end
 
@@ -38,7 +38,7 @@ RSpec.describe Authentication::JwtToken::CreateService do
 
       it "returns a Failure monad with the error message" do
         expect(service).to be_failure
-        expect(service.failure).to include("ECDSA key initialization failed")
+        expect(service.failure).to include("ECDSA key - invalid key")
       end
     end
 
