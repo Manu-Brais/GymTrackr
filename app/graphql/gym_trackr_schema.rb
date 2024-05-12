@@ -3,6 +3,7 @@
 class GymTrackrSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
+  context_class GymTrackrContext
 
   # For batch-loading (see https://graphql-ruby.org/dataloader/overview.html)
   use GraphQL::Dataloader
@@ -14,6 +15,10 @@ class GymTrackrSchema < GraphQL::Schema
     #   return nil
     # end
     super
+  end
+
+  rescue_from(JWT::ExpiredSignature) do |err, obj, args, ctx, field|
+    raise GraphQL::ExecutionError, "Your token has expired. Please log in again."
   end
 
   # Union and Interface Resolution

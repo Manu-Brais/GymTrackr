@@ -12,7 +12,7 @@ module Authentication
       def call
         pem_file = yield read_pem_file
         ecdsa_key = yield initialize_ecdsa_key(pem_file)
-        yield decode_token(ecdsa_key)
+        decode_token(ecdsa_key)
       end
 
       private

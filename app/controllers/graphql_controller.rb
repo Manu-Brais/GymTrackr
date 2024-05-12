@@ -11,7 +11,7 @@ class GraphqlController < ApplicationController
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      current_user: current_user
+      token: token
     }
     result = GymTrackrSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
@@ -49,15 +49,13 @@ class GraphqlController < ApplicationController
     render json: {errors: [{message: e.message, backtrace: e.backtrace}], data: {}}, status: 500
   end
 
-  def current_user
+  def token
     return if request.headers["Authorization"].blank?
 
     bearer_token = request.headers["Authorization"].match("Bearer (.*)$")[1]
 
     if bearer_token
-      payload = ::Authentication::JwtToken::DecoderService.call(bearer_token)
-
-      User.find(payload["user_id"])
+      ::Authentication::JwtToken::DecoderService.call(bearer_token)
     end
   end
 end

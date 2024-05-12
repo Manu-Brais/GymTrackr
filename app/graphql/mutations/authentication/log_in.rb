@@ -13,13 +13,16 @@ module Mutations
         raise Errors::LogInError.new("Incorrect email or password") unless user&.authenticate(password)
 
         token = generate_token(user)
-        {token: token, user: user}
+
+        raise Errors::LogInError.new(token.failure) if token.failure?
+
+        {token: token.success, user: user}
       end
 
       private
 
       def generate_token(user)
-        ::Authentication::JwtToken::CreateService.call(user)
+        ::Authentication::JwtToken::CreateService.call(user, expiration: 1.day.from_now.to_i)
       end
     end
   end
