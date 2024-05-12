@@ -10,6 +10,7 @@ gem "pg"
 gem "puma", ">= 5.0"
 gem "propshaft"
 gem "tzinfo-data", platforms: %i[windows jruby]
+gem "ruby-ulid", "~> 0.8.0"
 
 group :development do
   gem "graphiql-rails"

@@ -1,20 +1,18 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe Authentication::JwtToken::DecoderService do
   subject(:service) { described_class.call(bearer_token) }
 
   let(:user) { create(:user) }
-  let!(:bearer_token) { ::Authentication::JwtToken::CreateService.call(user) }
+  let(:bearer_token) { "sample_token" }
+  let(:decoded_bearer_token) { [{"user_id" => user.id, "type" => user.authenticatable_type, "exp" => 1000}] }
 
   describe "#call" do
     context "when all steps succeed" do
       before do
-        allow(File).to receive(:read).and_return("fake_pem_content")
+        allow(ENV).to receive(:[]).with("ECDSA_KEY").and_return("your_ecdsa_private_key")
         allow(OpenSSL::PKey::EC).to receive(:new).and_return("fake_ecdsa_key")
-        allow(JWT)
-          .to receive(:decode)
-          .with(any_args)
-          .and_return([{"user_id" => user.id, "type" => user.authenticatable_type, "exp" => 1000}])
+        allow(JWT).to receive(:decode).and_return(decoded_bearer_token)
       end
 
       it "returns the decoded payload" do
@@ -23,20 +21,9 @@ RSpec.describe Authentication::JwtToken::DecoderService do
       end
     end
 
-    context "when PEM file reading fails" do
-      before do
-        allow(File).to receive(:read).and_raise(Errno::ENOENT)
-      end
-
-      it "returns a Failure monad with the error message" do
-        expect(service).to be_failure
-        expect(service.failure).to include("PEM file - No such file or directory")
-      end
-    end
-
     context "when ECDSA key initialization fails" do
       before do
-        allow(File).to receive(:read).and_return("fake_pem_content")
+        allow(ENV).to receive(:[]).with("ECDSA_KEY").and_return("your_ecdsa_private_key")
         allow(OpenSSL::PKey::EC).to receive(:new).and_raise(OpenSSL::PKey::ECError, "invalid key")
       end
 
@@ -48,7 +35,7 @@ RSpec.describe Authentication::JwtToken::DecoderService do
 
     context "when token decoding fails" do
       before do
-        allow(File).to receive(:read).and_return("fake_pem_content")
+        allow(ENV).to receive(:[]).with("ECDSA_KEY").and_return("your_ecdsa_private_key")
         allow(OpenSSL::PKey::EC).to receive(:new).and_return("fake_ecdsa_key")
         allow(JWT).to receive(:decode).and_raise(JWT::DecodeError, "invalid token")
       end

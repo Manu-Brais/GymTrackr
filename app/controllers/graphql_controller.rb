@@ -54,6 +54,6 @@ class GraphqlController < ApplicationController
     return Failure("JWT not present") if request.authorization.blank?
 
     bearer_token = request.authorization.match("Bearer (.*)$").to_a.second
-    ::Authentication::JwtToken::DecoderService.call(bearer_token)
+    Authentication::JwtToken::DecoderService.call(bearer_token)
   end
 end

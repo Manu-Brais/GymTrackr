@@ -10,26 +10,16 @@ module Authentication
       end
 
       def call
-        pem_file = yield read_pem_file
-        ecdsa_key = yield initialize_ecdsa_key(pem_file)
+        ecdsa_key = yield initialize_ecdsa_key
         decode_token(ecdsa_key)
       end
 
       private
 
-      PEM_FILE_PATH = "ecdsa_key.pem"
-
-      def read_pem_file
-        Try[Errno::ENOENT] do
-          File.read(PEM_FILE_PATH)
-        end.to_result.or do |error|
-          Failure("PEM file - #{error.message}")
-        end
-      end
-
-      def initialize_ecdsa_key(pem_file)
+      def initialize_ecdsa_key
         Try[OpenSSL::PKey::ECError] do
-          OpenSSL::PKey::EC.new(pem_file)
+          ec_key = ENV["ECDSA_KEY"]
+          OpenSSL::PKey::EC.new(ec_key)
         end.to_result.or do |error|
           Failure("ECDSA key - #{error.message}")
         end
