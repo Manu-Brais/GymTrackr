@@ -10,6 +10,7 @@ services:
       db:
         condition: service_healthy
     tty: true
+    stdin_open: true
     command: 'bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b 0.0.0.0"'
     volumes:
       - .:/rails
@@ -50,6 +51,7 @@ services:
       db_test:
         condition: service_healthy
     tty: true
+    stdin_open: true
     command: bundle exec rails s -p 3001 -b '0.0.0.0'
     volumes:
       - .:/rails

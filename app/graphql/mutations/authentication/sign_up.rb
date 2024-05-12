@@ -14,7 +14,8 @@ module Mutations
 
       def resolve(name:, surname:, phone:, address:, email:, password:, password_confirmation:, type:)
         authenticatable = set_authenticatable(name, surname, phone, address, type)
-        return {user: nil, errors: authenticatable.errors.full_messages} unless authenticatable.valid?
+
+        raise Errors::SignUpError.new(authenticatable.errors.full_messages.join(", ")) unless authenticatable.valid?
 
         user = User.new(
           email: email,
@@ -37,7 +38,7 @@ module Mutations
         when "client"
           Client.new(name: name, surname: surname, phone: phone, address: address)
         else
-          raise GraphQL::ExecutionError, "Invalid Authenticatable type, valid types: coach, client"
+          raise Errors::SignUpError.new("Invalid Authenticatable type, valid types: coach, client")
         end
       end
     end
