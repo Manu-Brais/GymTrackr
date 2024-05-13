@@ -20,6 +20,7 @@ services:
     environment:
       RAILS_ENV: development
       DATABASE_URL: postgres://postgres:password@db:5432/gym_trackr_development
+      ECDSA_KEY: ${ECDSA_KEY}
     networks:
       - gym_trackr_network
 
@@ -41,14 +42,14 @@ services:
     ports:
       - "5432:5432"
 
-  app_test:
+  app-test:
     build:
       context: .
       dockerfile: Dockerfile
     image: gym_tracker-test
     init: true
     depends_on:
-      db_test:
+      db-test:
         condition: service_healthy
     tty: true
     stdin_open: true
@@ -60,11 +61,12 @@ services:
       - "3001:3000"
     environment:
       RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:password@db:5432/gym_trackr_test
+      DATABASE_URL: postgres://postgres:password@db-test:5432/gym_trackr_test
+      ECDSA_KEY: ${ECDSA_KEY}
     networks:
       - gym_trackr_network
 
-  db_test:
+  db-test:
     image: postgres:latest
     volumes:
       - postgres_data_test:/var/lib/postgresql/data
@@ -72,8 +74,6 @@ services:
       POSTGRES_DB: gym_trackr_test
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-    networks:
-      - gym_trackr_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -81,6 +81,8 @@ services:
       retries: 3
     ports:
       - "5433:5432"
+    networks:
+      - gym_trackr_network
 
   pgadmin:
     image: dpage/pgadmin4

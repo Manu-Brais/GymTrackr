@@ -2,17 +2,19 @@
 
 class GymTrackrContext < GraphQL::Query::Context
   def token
-    token = fetch(:token, nil)
+    token = fetch(:token)
 
     raise Errors::AuthenticationError, token.failure if token.failure?
 
     token.success
   end
 
-  def current_user?
-    return false unless token
+  def authenticate_user!
+    raise Errors::AuthenticationError, "You need to authenticate to perform this action" unless authenticated?
+  end
 
-    true
+  def authenticated?
+    token && token.fetch("valid_for", nil) == "authentication"
   end
 
   def current_user_id

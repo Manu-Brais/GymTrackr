@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe "GraphQL, logIn mutation", type: :request do
   subject(:execute_log_in_mutation) do

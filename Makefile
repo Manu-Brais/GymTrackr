@@ -1,21 +1,17 @@
 .PHONY: install
 install:
+	docker compose build app app-test --no-cache && \
 	docker compose run --rm app bash -c "\
 	bundle install && \
-	bundle exec rails db:drop && \
-	bundle exec rails db:create && \
-	bundle exec rails db:migrate && \
-	bundle exec rails db:seed"
-	docker compose run --rm app_test bash -c "\
+	bundle exec rails db:drop db:create db:migrate db:seed"
+	docker compose run --rm app-test bash -c "\
 	bundle install && \
-	bundle exec rails db:drop && \
-	bundle exec rails db:create && \
-	bundle exec rails db:migrate"
+	bundle exec rails db:drop db:create db:migrate db:seed"
 
 .PHONY: bundle
 bundle:
 	docker compose run --rm app bundle install
-	docker compose run --rm app_test bundle install
+	docker compose run --rm app-test bundle install
 
 .PHONY: console
 console:
@@ -28,15 +24,18 @@ server:
 .PHONY: db.migrate
 db.migrate:
 	docker compose run --rm app bundle exec rails db:migrate
+	docker compose run --rm app-test bundle exec rails db:migrate
 
 STEP ?= 1
 .PHONY: db.rollback
 db.rollback:
 	docker compose run --rm app bundle exec rails db:rollback STEP=$(STEP)
+	docker compose run --rm app-test bundle exec rails db:rollback STEP=$(STEP)
 
 .PHONY: db.reset
 db.reset:
 	docker compose run --rm app bundle exec rails db:reset
+	docker compose run --rm app-test bundle exec rails db:reset
 
 .PHONY: db.seed
 db.seed:
@@ -56,9 +55,9 @@ bash:
 
 .PHONY: test
 test:
-	docker compose run --rm app_test bundle exec rspec
+	docker compose run --rm app-test bundle exec rspec
 
 .PHONY: test.session
 test.session:
-	docker compose run --rm app_test bash
+	docker compose run --rm app-test bash
 
