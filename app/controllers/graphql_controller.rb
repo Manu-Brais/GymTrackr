@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class GraphqlController < ApplicationController
+  include Dry::Monads[:result]
   # If accessing from outside this domain, nullify the session
   # This allows for outside API access while preventing CSRF attacks,
   # but you'll have to authenticate your user separately
@@ -50,12 +51,9 @@ class GraphqlController < ApplicationController
   end
 
   def token
-    return if request.headers["Authorization"].blank?
+    return Failure("JWT not present") if request.authorization.blank?
 
-    bearer_token = request.headers["Authorization"].match("Bearer (.*)$")[1]
-
-    if bearer_token
-      ::Authentication::JwtToken::DecoderService.call(bearer_token)
-    end
+    bearer_token = request.authorization.match("Bearer (.*)$").to_a.second
+    ::Authentication::JwtToken::DecoderService.call(bearer_token)
   end
 end

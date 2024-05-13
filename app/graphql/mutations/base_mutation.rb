@@ -6,5 +6,9 @@ module Mutations
     field_class Types::BaseField
     input_object_class Types::BaseInputObject
     object_class Types::BaseObject
+
+    def authenticated_user?
+      context.current_user?
+    end
   end
 end
