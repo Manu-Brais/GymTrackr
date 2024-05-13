@@ -13,12 +13,15 @@ ENV BUNDLE_PATH="/usr/local/bundle"
 FROM base as build
 
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git pkg-config \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    git \
+    pkg-config \
     libpq-dev
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle config set --local frozen false
-RUN bundle install && \
+RUN bundle config set --local frozen false && \
+    bundle install && \
     rm -rf ~/.bundle/ \
     "${BUNDLE_PATH}"/ruby/*/cache \
     "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
