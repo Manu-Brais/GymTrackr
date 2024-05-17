@@ -1,3 +1,4 @@
 [submodule "frontend"]
-	path = frontend
-	url = https://github.com/Manu-Brais/gym_tracker-frontend
+    path = frontend
+    url = https://github.com/Manu-Brais/gym_tracker-frontend
+    branch = main

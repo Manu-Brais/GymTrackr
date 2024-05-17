@@ -11,6 +11,7 @@ module Mutations
       argument :type, String, required: true
 
       field :user, Types::UserType, null: true
+      field :token, String, null: true
 
       def resolve(name:, surname:, phone:, address:, email:, password:, password_confirmation:, type:)
         authenticatable = set_authenticatable(name, surname, phone, address, type)
@@ -22,10 +23,12 @@ module Mutations
           password_confirmation: password_confirmation,
           authenticatable: authenticatable
         )
-
         raise Errors::SignUpError.new(user.errors.full_messages) unless user.save
 
-        {user: user}
+        token = generate_token(user)
+        raise Errors::SignUpError.new(token.failure) if token.failure?
+
+        {user: user, token: token.success}
       end
 
       private
@@ -39,6 +42,10 @@ module Mutations
         else
           raise Errors::SignUpError.new("Invalid Authenticatable type, valid types: coach, client")
         end
+      end
+
+      def generate_token(user)
+        ::Authentication::JwtToken::CreateService.call(user, expiration: 7.day.from_now.to_i)
       end
     end
   end

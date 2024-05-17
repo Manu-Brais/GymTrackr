@@ -96,7 +96,7 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - ./frontend:/frontend
+      - ./frontend:/app
 
   pgadmin:
     image: dpage/pgadmin4

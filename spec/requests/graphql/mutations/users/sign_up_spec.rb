@@ -26,7 +26,11 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
   let(:password_confirmation) { "password" }
 
   context "happy path" do
-    before { execute_sign_up_mutation }
+    before do
+      allow(Authentication::JwtToken::CreateService)
+        .to receive(:call).and_return(Dry::Monads::Result::Success.new("token"))
+      execute_sign_up_mutation
+    end
 
     context "when the user is a coach" do
       let(:type) { "coach" }
@@ -38,6 +42,10 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             "name" => name
           }
         })
+      end
+
+      it "returns the token" do
+        expect(response.parsed_body.dig("data", "signup", "token")).to be_present
       end
     end
 
@@ -51,6 +59,10 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             "name" => name
           }
         })
+      end
+
+      it "returns the token" do
+        expect(response.parsed_body.dig("data", "signup", "token")).to be_present
       end
     end
   end
@@ -67,7 +79,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("Sign up error: [\"Email has already been taken\"]")
+            .to eq("[\"Email has already been taken\"]")
         end
       end
 
@@ -79,7 +91,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("Sign up error: [\"Password is too short (minimum is 6 characters)\"]")
+            .to eq("[\"Password is too short (minimum is 6 characters)\"]")
         end
       end
 
@@ -90,7 +102,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("Sign up error: [\"Password confirmation doesn't match Password\"]")
+            .to eq("[\"Password confirmation doesn't match Password\"]")
         end
       end
     end
@@ -106,7 +118,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("Sign up error: [\"Email has already been taken\"]")
+            .to eq("[\"Email has already been taken\"]")
         end
       end
 
@@ -118,7 +130,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("Sign up error: [\"Password is too short (minimum is 6 characters)\"]")
+            .to eq("[\"Password is too short (minimum is 6 characters)\"]")
         end
       end
 
@@ -129,7 +141,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("Sign up error: [\"Password confirmation doesn't match Password\"]")
+            .to eq("[\"Password confirmation doesn't match Password\"]")
         end
       end
     end
@@ -149,6 +161,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             password: "#{password || "null"}",
             passwordConfirmation: "#{password_confirmation || "null"}"
           }) {
+            token
             user {
               email
               authenticatable {

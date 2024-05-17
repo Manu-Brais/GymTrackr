@@ -7,6 +7,8 @@ install:
 	docker compose run --rm app-test bash -c "\
 	bundle install && \
 	bundle exec rails db:drop db:create db:migrate db:seed"
+	docker compose run --rm frontend bash -c "\
+	npm install --legacy-peer-deps"
 
 .PHONY: bundle
 bundle:
@@ -19,7 +21,7 @@ console:
 
 .PHONY: server
 server:
-	docker compose up app
+	docker compose up app frontend
 
 .PHONY: db.migrate
 db.migrate:
