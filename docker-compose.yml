@@ -84,6 +84,20 @@ services:
     networks:
       - gym_trackr_network
 
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    image: gym_tracker-frontend
+    tty: true
+    stdin_open: true
+    networks:
+      - gym_trackr_network
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./frontend:/frontend
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4_container
@@ -105,6 +119,7 @@ networks:
 volumes:
   postgres_data:
   postgres_data_test:
+  frontend:
   pgadmin_data:
   bundle_data:
   bundle_data_test:

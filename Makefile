@@ -1,6 +1,6 @@
 .PHONY: install
 install:
-	docker compose build app app-test --no-cache && \
+	docker compose build app app-test frontend --no-cache && \
 	docker compose run --rm app bash -c "\
 	bundle install && \
 	bundle exec rails db:drop db:create db:migrate db:seed"
