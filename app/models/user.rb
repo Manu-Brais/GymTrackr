@@ -4,6 +4,7 @@ class User < ApplicationRecord
   belongs_to :authenticatable, polymorphic: true
   has_many :referral_tokens
 
+  # TODO - Add email validation (pattern)
   validates :email, presence: true, uniqueness: true
   validates :password, presence: true, length: {minimum: 6}
 end
