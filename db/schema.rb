@@ -10,11 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_12_210309) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_25_144219) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
-  create_table "clients", force: :cascade do |t|
+  create_table "clients", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "surname"
+    t.string "phone"
+    t.string "address"
+    t.uuid "coach_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coach_id"], name: "index_clients_on_coach_id"
+  end
+
+  create_table "coaches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "surname"
     t.string "phone"
@@ -23,32 +35,24 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_12_210309) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "coaches", force: :cascade do |t|
-    t.string "name"
-    t.string "surname"
-    t.string "phone"
-    t.string "address"
+  create_table "referral_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "coach_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["coach_id"], name: "index_referral_tokens_on_coach_id"
   end
 
-  create_table "referral_tokens", id: :string, force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_referral_tokens_on_user_id"
-  end
-
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", null: false
     t.string "password_digest", null: false
     t.string "authenticatable_type"
-    t.bigint "authenticatable_id"
+    t.string "authenticatable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["authenticatable_type", "authenticatable_id"], name: "index_users_on_authenticatable_type_and_authenticatable_id"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  add_foreign_key "referral_tokens", "users"
+  add_foreign_key "clients", "coaches"
+  add_foreign_key "referral_tokens", "coaches"
 end
