@@ -18,14 +18,17 @@ module Types
       ids.map { |id| context.schema.object_from_id(id, context) }
     end
 
-    # Add root-level fields here.
-    # They will be entry points for queries on your schema.
+    field :get_referral, Types::ReferralType, null: false
 
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
+    def get_referral
+      context.authenticate_user!
+      # TO-DO: Implement policies with Pundit
+      # to check if the current_user is allowed to
+      # access the referral token (and other resources)
+      referral_token = context.current_user.authenticatable.referral_token
+      {
+        referral_token: referral_token.id
+      }
     end
   end
 end
