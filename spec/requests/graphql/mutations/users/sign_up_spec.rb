@@ -4,10 +4,6 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
   subject(:execute_sign_up_mutation) do
     post "/graphql", params: {
       query: mutation(
-        name: name,
-        surname: surname,
-        phone: phone,
-        address: address,
         type: type,
         email: email,
         password: password,
@@ -16,10 +12,6 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
     }
   end
 
-  let(:name) { "John" }
-  let(:surname) { "Doe" }
-  let(:phone) { "123456789" }
-  let(:address) { "1234 Main St" }
   let(:type) { "coach" }
   let(:email) { "john@doe.com" }
   let(:password) { "password" }
@@ -37,10 +29,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
       it "signs up a new coach successfully" do
         expect(response.parsed_body.dig("data", "signup", "user")).to eq({
-          "email" => email,
-          "authenticatable" => {
-            "name" => name
-          }
+          "email" => email
         })
       end
 
@@ -54,10 +43,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
       it "signs up a new client successfully" do
         expect(response.parsed_body.dig("data", "signup", "user")).to eq({
-          "email" => email,
-          "authenticatable" => {
-            "name" => name
-          }
+          "email" => email
         })
       end
 
@@ -147,15 +133,11 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
     end
   end
 
-  def mutation(name: nil, surname: nil, phone: nil, address: nil, type: nil, email: nil, password: nil, password_confirmation: nil)
+  def mutation(type: nil, email: nil, password: nil, password_confirmation: nil)
     <<~GQL
       mutation {
         signup(
           input: {
-            name: "#{name || "null"}",
-            surname: "#{surname || "null"}",
-            phone: "#{phone || "null"}",
-            address: "#{address || "null"}",
             type: "#{type || "null"}",
             email: "#{email || "null"}",
             password: "#{password || "null"}",
@@ -164,14 +146,6 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             token
             user {
               email
-              authenticatable {
-                ... on Coach {
-                  name
-                }
-                ... on Client {
-                  name
-                }
-              }
            }
         }
       }

@@ -1,10 +1,6 @@
 module Mutations
   module Authentication
     class SignUp < BaseMutation
-      argument :name, String, required: true
-      argument :surname, String, required: true
-      argument :phone, String, required: true
-      argument :address, String, required: true
       argument :email, String, required: true
       argument :password, String, required: true
       argument :password_confirmation, String, required: true
@@ -13,8 +9,8 @@ module Mutations
       field :user, Types::UserType, null: true
       field :token, String, null: true
 
-      def resolve(name:, surname:, phone:, address:, email:, password:, password_confirmation:, type:)
-        authenticatable = set_authenticatable(name, surname, phone, address, type)
+      def resolve(email:, password:, password_confirmation:, type:)
+        authenticatable = set_authenticatable(type)
         raise Errors::SignUpError.new(authenticatable.errors.full_messages) unless authenticatable.valid?
 
         user = User.new(
@@ -33,12 +29,12 @@ module Mutations
 
       private
 
-      def set_authenticatable(name, surname, phone, address, type)
+      def set_authenticatable(type)
         case type
         when "coach"
-          Coach.new(name: name, surname: surname, phone: phone, address: address)
+          Coach.new
         when "client"
-          Client.new(name: name, surname: surname, phone: phone, address: address)
+          Client.new
         else
           raise Errors::SignUpError.new("Invalid Authenticatable type, valid types: coach, client")
         end
