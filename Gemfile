@@ -8,6 +8,7 @@ gem "graphql"
 gem "jwt"
 gem "pg"
 gem "puma", ">= 5.0"
+gem "pundit"
 gem "propshaft"
 gem "rack-cors"
 gem "tzinfo-data", platforms: %i[windows jruby]

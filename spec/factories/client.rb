@@ -4,5 +4,6 @@ FactoryBot.define do
     surname { "Doe" }
     phone { "654321234" }
     address { "1234 Main St" }
+    coach { create(:coach) }
   end
 end
