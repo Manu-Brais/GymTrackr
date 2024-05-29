@@ -73,7 +73,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("[\"Email has already been taken\"]")
+            .to eq("Authentication error: [\"Email has already been taken\"]")
         end
       end
 
@@ -85,7 +85,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("[\"Password is too short (minimum is 6 characters)\"]")
+            .to eq("Authentication error: [\"Password is too short (minimum is 6 characters)\"]")
         end
       end
 
@@ -96,7 +96,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("[\"Password confirmation doesn't match Password\"]")
+            .to eq("Authentication error: [\"Password confirmation doesn't match Password\"]")
         end
       end
     end
@@ -109,7 +109,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("Referral token is required for Client type")
+            .to eq("Authentication error: Referral token is required for Client type")
         end
       end
 
@@ -120,7 +120,7 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
 
         it "returns an error" do
           expect(response.parsed_body.dig("errors").first.dig("message"))
-            .to eq("Invalid referral token")
+            .to eq("Authentication error: Invalid referral token")
         end
       end
     end

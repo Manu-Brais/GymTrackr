@@ -7,6 +7,9 @@
 # Ignore the frontend, we're using a separate repository for that.
 /frontend
 
+# Ignore vscode settings.
+.vscode
+
 # Ignore bundler config.
 /.bundle
 
