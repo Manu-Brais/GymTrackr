@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class GymTrackrContext < GraphQL::Query::Context
+  include Pundit::Authorization
+
   def token
     token = fetch(:token)
 
@@ -25,5 +27,12 @@ class GymTrackrContext < GraphQL::Query::Context
     return unless current_user_id
 
     @current_user ||= User.find(current_user_id)
+  end
+
+  def authorize(record, query)
+    policy = Pundit.policy!(current_user, record)
+    raise Errors::AuthorizationError, "this #{record.class.name.downcase} is not allowed to #{query}" unless policy.public_send(query)
+
+    true
   end
 end

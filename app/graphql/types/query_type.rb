@@ -2,6 +2,9 @@
 
 module Types
   class QueryType < Types::BaseObject
+    include Helpers::Authorization
+    include Helpers::Context
+
     field :node, Types::NodeType, null: true, description: "Fetches an object given its ID." do
       argument :id, ID, required: true, description: "ID of the object."
     end
@@ -21,11 +24,12 @@ module Types
     field :get_referral, Types::ReferralType, null: false
 
     def get_referral
-      context.authenticate_user!
-      # TO-DO: Implement policies with Pundit
-      # to check if the current_user is allowed to
-      # access the referral token (and other resources)
-      referral_token = context.current_user.authenticatable.referral_token
+      authorize(current_user, :get_referral_token?)
+
+      referral_token = current_user
+        .authenticatable
+        .referral_token
+
       {
         referral_token: referral_token.id
       }

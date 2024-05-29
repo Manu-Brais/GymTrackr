@@ -11,17 +11,26 @@ module Mutations
       field :token, String, null: true
 
       def resolve(email:, password:, password_confirmation:, type:, referral_token: nil)
-        user = ::Authentication::SignUpService.call(email, password, password_confirmation, type, referral_token)
-        raise Errors::AuthenticationError.new(user.failure) if user.failure?
-
+        user = sign_up_user(email, password, password_confirmation, type, referral_token)
         token = generate_jwt(user)
-        {user: user.success, token: token.success}
+
+        {user: user, token: token}
       end
 
       private
 
+      def sign_up_user(email, password, password_confirmation, type, referral_token)
+        user_sign_up_result = ::Authentication::SignUpService.call(email, password, password_confirmation, type, referral_token)
+        raise Errors::SignUpError, user_sign_up_result.failure if user_sign_up_result.failure?
+
+        user_sign_up_result.success
+      end
+
       def generate_jwt(user)
-        ::Authentication::JwtToken::CreateService.call(user, expiration: 7.day.from_now.to_i)
+        jwt_creation_result = ::Authentication::JwtToken::CreateService.call(user, expiration: 7.day.from_now.to_i)
+        raise Errors::SignUpError, jwt_creation_result.failure if jwt_creation_result.failure?
+
+        jwt_creation_result.success
       end
     end
   end
