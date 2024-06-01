@@ -2,6 +2,7 @@ source "https://rubygems.org"
 ruby "3.3.0"
 gem "rails", "~> 7.1.3", ">= 7.1.3.2"
 
+gem "apollo_upload_server"
 gem "bcrypt"
 gem "dry-monads"
 gem "graphql"
