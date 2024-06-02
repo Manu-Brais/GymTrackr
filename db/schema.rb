@@ -64,9 +64,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_01_204027) do
   end
 
   create_table "exercises", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name"
+    t.string "title"
     t.text "description"
-    t.string "video_url"
     t.string "video_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

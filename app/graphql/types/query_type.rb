@@ -4,6 +4,7 @@ module Types
   class QueryType < Types::BaseObject
     include Helpers::Authorization
     include Helpers::Context
+    include Queries::Protected::Coach::GetReferralQuery
 
     field :node, Types::NodeType, null: true, description: "Fetches an object given its ID." do
       argument :id, ID, required: true, description: "ID of the object."
@@ -19,20 +20,6 @@ module Types
 
     def nodes(ids:)
       ids.map { |id| context.schema.object_from_id(id, context) }
-    end
-
-    field :get_referral, Types::ReferralType, null: false
-
-    def get_referral
-      authorize(current_user, :get_referral_token?)
-
-      referral_token = current_user
-        .authenticatable
-        .referral_token
-
-      {
-        referral_token: referral_token.id
-      }
     end
   end
 end

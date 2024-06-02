@@ -8,8 +8,7 @@ module Helpers
       context.authenticate_user!
     end
 
-    def authorize(record, query)
-      context.authenticate_user!
+    def authorize!(record, query)
       context.authorize(record, query)
     end
   end
