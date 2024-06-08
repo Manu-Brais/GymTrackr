@@ -9,15 +9,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      solid_queue_worker:
+        condition: service_started
     tty: true
     stdin_open: true
     command: 'bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b 0.0.0.0"'
-    volumes:
+    volumes: &app_volumes
       - .:/rails
       - bundle_data:/usr/local/bundle
     ports:
       - "3000:3000"
-    environment:
+    environment: &app_environment
       RAILS_ENV: development
       DATABASE_URL: postgres://postgres:password@db:5432/gym_trackr_development
       ECDSA_KEY: ${ECDSA_KEY}
@@ -41,6 +43,21 @@ services:
       retries: 3
     ports:
       - "5432:5432"
+
+  solid_queue_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    image: gym_tracker-dev
+    command: bundle exec rake solid_queue:work
+    depends_on:
+      - db
+    networks:
+      - gym_trackr_network
+    volumes: *app_volumes
+    environment: *app_environment
 
   app-test:
     build:

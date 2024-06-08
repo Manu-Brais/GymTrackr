@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   if Rails.env.development?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
+    # For testing purposes, mount the MissionControl::Jobs::Engine within this block,
+    # so that the jobs dashboard is only available in development. This could change
+    # when we want to expose the dashboard in production.
+    mount MissionControl::Jobs::Engine, at: "/jobs"
   end
 
   post "/graphql", to: "graphql#execute"
