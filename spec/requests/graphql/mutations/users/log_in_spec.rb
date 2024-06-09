@@ -78,9 +78,6 @@ RSpec.describe "GraphQL, logIn mutation", type: :request do
             email: "#{email || "null"}",
             password: "#{password || "null"}"
           }) {
-            user {
-              email
-            }
             token
         }
       }

@@ -15,7 +15,7 @@ module Mutations
           user = sign_up_user(email, password, password_confirmation, type, referral_token)
           token = generate_jwt(user)
 
-          {user: user, token: token}
+          {token: token}
         end
 
         private
