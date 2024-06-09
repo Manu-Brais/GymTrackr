@@ -1,13 +1,9 @@
 .PHONY: install
 install:
-	docker compose build app app-test frontend --no-cache && \
-	docker compose run --rm app bash -c "\
-	bundle install && \
-	bundle exec rails db:drop db:create db:migrate db:seed"
-	docker compose run --rm app-test bash -c "\
-	bundle install && \
-	bundle exec rails db:drop db:create db:migrate db:seed"
-	docker compose run --rm frontend bash -c "npm install"
+	docker compose build
+	make bundle
+	make db.setup
+	docker compose run --rm frontend npm install
 
 .PHONY: bundle
 bundle:
@@ -20,31 +16,32 @@ console:
 
 .PHONY: server
 server:
-	docker compose up app frontend
+	docker compose --profile server up
+
+.PHONY: db.setup
+db.setup:
+	docker compose --profile migrations run --rm app bundle exec rails db:drop db:setup
 
 .PHONY: db.migrate
 db.migrate:
-	docker compose run --rm app bundle exec rails db:migrate
-	docker compose run --rm app-test bundle exec rails db:migrate
+	docker compose --profile migrations run --rm app bundle exec rails db:migrate
 
 STEP ?= 1
 .PHONY: db.rollback
 db.rollback:
-	docker compose run --rm app bundle exec rails db:rollback STEP=$(STEP)
-	docker compose run --rm app-test bundle exec rails db:rollback STEP=$(STEP)
+	docker compose --profile migrations run --rm app bundle exec rails db:rollback STEP=$(STEP)
 
 .PHONY: db.reset
 db.reset:
-	docker compose run --rm app bundle exec rails db:reset
-	docker compose run --rm app-test bundle exec rails db:reset
+	docker compose --profile migrations run --rm app bundle exec rails db:reset
 
 .PHONY: db.seed
 db.seed:
-	docker compose run --rm app bundle exec rails db:seed
+	docker compose --profile migrations run --rm app bundle exec rails db:seed
 
 .PHONY: db.session
 db.session:
-	docker compose run --rm app bundle exec rails db
+	docker compose --profile migrations run --rm app bundle exec rails db
 
 .PHONY: standard
 standard:
@@ -52,13 +49,13 @@ standard:
 
 .PHONY: bash
 bash:
-	docker compose run --rm app bash
+	docker compose run --rm --no-deps app bash
 
 .PHONY: test
 test:
-	docker compose run --rm app-test bundle exec rspec
+	docker compose --profile test run --rm app-test bundle exec rspec
 
 .PHONY: test.session
 test.session:
-	docker compose run --rm app-test bash
+	docker compose --profile test run --rm app-test bash
 

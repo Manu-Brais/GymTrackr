@@ -3,7 +3,8 @@
 module Exercises
   class CreateService < DryService
     # Remember to define tests for this service
-    def initialize(title, description, video_file)
+    def initialize(coach_id, title, description, video_file)
+      @coach_id = coach_id
       @title = title
       @description = description
       @video_file = video_file
@@ -20,6 +21,7 @@ module Exercises
     def initialize_exercise
       Try[ActiveRecord::RecordInvalid] do
         Exercise.new(
+          coach_id: @coach_id,
           title: @title,
           description: @description,
           video_status: :enqueued

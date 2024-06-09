@@ -17,7 +17,7 @@ module Mutations
 
           raise Errors::LogInError.new(token.failure) if token.failure?
 
-          {token: token.success, user: user}
+          {token: token.success}
         end
 
         private

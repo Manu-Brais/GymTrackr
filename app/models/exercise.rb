@@ -1,5 +1,6 @@
 class Exercise < ApplicationRecord
   has_one_attached :video
+  has_one :coach
 
   validates :title, presence: true
   validates :video, presence: true
