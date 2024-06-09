@@ -11,8 +11,8 @@ install:
 
 .PHONY: bundle
 bundle:
-	docker compose run --rm app bundle install
-	docker compose run --rm app-test bundle install
+	docker compose run --rm --no-deps app bundle install
+	docker compose run --rm --no-deps app-test bundle install
 
 .PHONY: console
 console:
@@ -48,7 +48,7 @@ db.session:
 
 .PHONY: standard
 standard:
-	docker compose run --rm app bundle exec standardrb --fix-unsafely
+	docker compose run --rm --no-deps app bundle exec standardrb --fix-unsafely
 
 .PHONY: bash
 bash:

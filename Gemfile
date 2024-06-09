@@ -7,11 +7,13 @@ gem "bcrypt"
 gem "dry-monads"
 gem "graphql"
 gem "jwt"
+gem "mission_control-jobs"
 gem "pg"
 gem "puma", ">= 5.0"
 gem "pundit"
 gem "propshaft"
 gem "rack-cors"
+gem "solid_queue"
 gem "tzinfo-data", platforms: %i[windows jruby]
 gem "ruby-ulid", "~> 0.8.0"
 
