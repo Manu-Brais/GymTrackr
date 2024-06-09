@@ -14,6 +14,7 @@ gem "pundit"
 gem "propshaft"
 gem "rack-cors"
 gem "solid_queue"
+gem "streamio-ffmpeg"
 gem "tzinfo-data", platforms: %i[windows jruby]
 gem "ruby-ulid", "~> 0.8.0"
 
