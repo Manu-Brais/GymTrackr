@@ -14,6 +14,7 @@ module Mutations
           def resolve(title: nil, description: nil, video_file: nil)
             authorize!(current_user, :create_exercise?)
             result = ::Exercises::CreateService.call(
+              current_user.authenticatable_id,
               title,
               description,
               video_file

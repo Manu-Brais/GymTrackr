@@ -7,15 +7,13 @@ module Types
     field :video_url, String, null: true
 
     def video_url
-      if object.video.attached?
-        Rails.application
-          .routes
-          .url_helpers
-          .rails_blob_url(
-            object.video,
-            only_path: true
-          )
-      end
+      Rails.application
+        .routes
+        .url_helpers
+        .rails_blob_path(
+          object.video,
+          only_path: true
+        )
     end
   end
 end

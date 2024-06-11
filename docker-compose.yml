@@ -6,11 +6,10 @@ services:
       dockerfile: Dockerfile
     image: gym_tracker-dev
     init: true
+    profiles: [server, migrations]
     depends_on:
       db:
         condition: service_healthy
-      solid_queue_worker:
-        condition: service_started
     tty: true
     stdin_open: true
     command: 'bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b 0.0.0.0"'
@@ -36,6 +35,7 @@ services:
       POSTGRES_PASSWORD: password
     networks:
       - gym_trackr_network
+    profiles: [server, migrations, test]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -56,6 +56,7 @@ services:
       - db
     networks:
       - gym_trackr_network
+    profiles: [server, test]
     volumes: *app_volumes
     environment: *app_environment
 
@@ -66,8 +67,10 @@ services:
     image: gym_tracker-test
     init: true
     depends_on:
-      db-test:
+      db:
         condition: service_healthy
+      solid_queue_worker:
+        condition: service_started
     tty: true
     stdin_open: true
     command: bundle exec rails s -p 3001 -b '0.0.0.0'
@@ -76,28 +79,11 @@ services:
       - bundle_data_test:/usr/local/bundle
     ports:
       - "3001:3000"
+    profiles: [test]
     environment:
       RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:password@db-test:5432/gym_trackr_test
+      DATABASE_URL: postgres://postgres:password@db:5432/gym_trackr_test
       ECDSA_KEY: ${ECDSA_KEY}
-    networks:
-      - gym_trackr_network
-
-  db-test:
-    image: postgres:latest
-    volumes:
-      - postgres_data_test:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: gym_trackr_test
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    ports:
-      - "5433:5432"
     networks:
       - gym_trackr_network
 
@@ -108,6 +94,7 @@ services:
     image: gym_tracker-frontend
     tty: true
     stdin_open: true
+    profiles: [server]
     networks:
       - gym_trackr_network
     ports:
@@ -124,6 +111,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: gym@trackr.com
       PGADMIN_DEFAULT_PASSWORD: password
+    profiles: [pgadmin]
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     networks:

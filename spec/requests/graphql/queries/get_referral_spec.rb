@@ -32,7 +32,7 @@ RSpec.describe "GraphQL, get_referral Query", type: :request do
 
     it "returns the referral token" do
       expect(response.parsed_body.dig("errors").first.dig("message"))
-        .to eq("Autorization error: this user is not allowed to get_referral_token?")
+        .to eq("Authorization error: this user is not allowed to get_referral_token?")
     end
   end
 
