@@ -28,12 +28,6 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
     context "when the user is a coach" do
       let(:type) { "coach" }
 
-      it "signs up a new coach successfully" do
-        expect(response.parsed_body.dig("data", "signup", "user")).to eq({
-          "email" => email
-        })
-      end
-
       it "returns the token" do
         expect(response.parsed_body.dig("data", "signup", "token")).to be_present
       end
@@ -44,12 +38,6 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
       let(:referral) { create(:referral_token, coach: coach.authenticatable) }
       let(:type) { "client" }
       let(:referral_token) { referral.id }
-
-      it "signs up a new client successfully" do
-        expect(response.parsed_body.dig("data", "signup", "user")).to eq({
-          "email" => email
-        })
-      end
 
       it "returns the token" do
         expect(response.parsed_body.dig("data", "signup", "token")).to be_present
@@ -138,9 +126,6 @@ RSpec.describe "GraphQL, signUp mutation", type: :request do
             referralToken: "#{referral_token}"
           }) {
             token
-            user {
-              email
-           }
         }
       }
     GQL

@@ -33,6 +33,7 @@ module Authentication
         Try do
           {
             user_id: user.id,
+            user_type: user.coach? ? "coach" : "client",
             valid_for: TOKEN_PURPOSE,
             exp: expiration
           }
