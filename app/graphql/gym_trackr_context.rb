@@ -26,7 +26,11 @@ class GymTrackrContext < GraphQL::Query::Context
   def current_user
     return unless current_user_id
 
-    @current_user ||= User.find(current_user_id)
+    begin
+      @current_user ||= User.find(current_user_id)
+    rescue ActiveRecord::RecordNotFound
+      raise Errors::AuthenticationError, "User not found"
+    end
   end
 
   def authorize(record, query)

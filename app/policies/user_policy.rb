@@ -6,4 +6,8 @@ class UserPolicy < ApplicationPolicy
   def create_exercise?
     user.coach?
   end
+
+  def see_coach_exercises?
+    user.coach?
+  end
 end
