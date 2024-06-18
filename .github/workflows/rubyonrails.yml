@@ -32,6 +32,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Install FFmpeg
+        run: sudo apt-get install -y ffmpeg
       - name: Create database
         run: bin/rails db:create
       - name: Enable pgcrypto extension
