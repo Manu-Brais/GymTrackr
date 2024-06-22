@@ -1,6 +1,7 @@
 .PHONY: install
 install:
-	docker compose build
+	docker compose down
+	COMPOSE_PROFILES=server,test docker compose build --no-cache
 	make bundle
 	make db.setup
 	make db.migrate

@@ -42,7 +42,8 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Include FFMPEG (Video processing)
-RUN curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz | tar -xJ && \
+# https://johnvansickle.com/ffmpeg/
+RUN curl -L https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz | tar -xJ && \
     mv ffmpeg-*-amd64-static/ffmpeg /usr/local/bin/ffmpeg && \
     mv ffmpeg-*-amd64-static/ffprobe /usr/local/bin/ffprobe && \
     rm -rf ffmpeg-*-amd64-static
