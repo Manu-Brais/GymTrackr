@@ -113,7 +113,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: password
     profiles: [pgadmin]
     volumes:
-      - pgadmin_data:/var/lib/pgadmin
+      - pgadmin:/var/lib/pgadmin
+      - ./pgadmin/config/servers.json:/pgadmin4/servers.json
     networks:
       - gym_trackr_network
 
@@ -125,6 +126,6 @@ volumes:
   postgres_data:
   postgres_data_test:
   frontend:
-  pgadmin_data:
+  pgadmin:
   bundle_data:
   bundle_data_test:

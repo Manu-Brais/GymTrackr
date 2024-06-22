@@ -7,9 +7,10 @@ module Types
     field :video_url, String, null: true
 
     def video_url
-      return object.video_status unless object.video.attached?
+      return nil unless object.video.attached?
 
-      Rails.application
+      Rails
+        .application
         .routes
         .url_helpers
         .rails_blob_path(

@@ -50,12 +50,11 @@ RSpec.describe "GraphQL, CreateExercise mutation", type: :request do
       execute_create_exercise_mutation
     end
 
-    it "creates a new exercise" do
+    it "creates a new exercise and enqueue the video" do
       exercise = response.parsed_body.dig("data", "createExercise", "exercise")
       expect(exercise.fetch("title")).to eq(title)
       expect(exercise.fetch("description")).to eq(description)
       expect(exercise.fetch("videoStatus")).to eq("enqueued")
-      expect(exercise.fetch("videoUrl")).to be_present
     end
   end
 
