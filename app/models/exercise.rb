@@ -1,6 +1,6 @@
 class Exercise < ApplicationRecord
   after_update :notify_status_change, if: :saved_change_to_video_status?
-  after_destroy_commit { video.attachment.purge }
+  after_destroy_commit { video.attachment&.purge }
 
   has_one_attached :video, dependent: :purge
   belongs_to :coach
