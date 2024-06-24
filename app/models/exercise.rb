@@ -1,4 +1,5 @@
 class Exercise < ApplicationRecord
+  after_update :notify_status_change, if: :saved_change_to_video_status?
   after_destroy_commit { video.attachment.purge }
 
   has_one_attached :video, dependent: :purge
@@ -14,4 +15,12 @@ class Exercise < ApplicationRecord
     processed: "processed",
     failed: "failed"
   }
+
+  private
+
+  def notify_status_change
+    GymTrackrSchema.subscriptions.trigger(
+      :exercise_status_changed, {exercise_id: id}, self
+    )
+  end
 end

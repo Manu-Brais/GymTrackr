@@ -1,6 +1,9 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  # config.action_cable.url = "ws://localhost:3000/cable"
+  # config.action_cable.allowed_request_origins = ["http://localhost:3000", /http:\/\/localhost.*/]
+
   # Settings specified here will take precedence over those in config/application.rb.
   config.active_job.queue_adapter = :solid_queue
 
