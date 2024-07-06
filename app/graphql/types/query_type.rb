@@ -4,11 +4,13 @@ module Types
   class QueryType < Types::BaseObject
     include Helpers::Authorization
     include Helpers::Context
+    include Queries::Protected::User::FetchUserDataQuery
     include Queries::Protected::Coach::GetReferralQuery
     include Queries::Protected::Coach::ExercisesQuery
     include Queries::Protected::User::FetchUserDataQuery
     include Queries::Protected::Coach::GetClientsQuery
     include Queries::Protected::Coach::GetClientInfoQuery
+    include Queries::Protected::Coach::ExerciseQuery
 
     field :node, Types::NodeType, null: true, description: "Fetches an object given its ID." do
       argument :id, ID, required: true, description: "ID of the object."

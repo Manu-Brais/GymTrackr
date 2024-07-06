@@ -3,6 +3,7 @@ class Exercise < ApplicationRecord
   after_destroy_commit { video.attachment&.purge }
 
   has_one_attached :video, dependent: :purge
+  has_one_attached :thumbnail
   belongs_to :coach
 
   validates :title, presence: true
