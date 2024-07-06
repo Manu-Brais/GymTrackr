@@ -32,8 +32,8 @@ RSpec.describe "GraphQL, exercises Query", type: :request do
       end
 
       it "returns the coach data" do
-        expect(response.parsed_body.dig("data", "exercises").first.dig("videoUrl")).to eq("videoUrl")
-        expect(response.parsed_body.dig("data", "exercises")).to match_array(
+        expect(response.parsed_body.dig("data", "exercises", "edges").first.dig("node", "videoUrl")).to eq("videoUrl")
+        expect(response.parsed_body.dig("data", "exercises", "edges").first.dig("node")).to match(
           a_hash_including(
             "description" => "Exercise Description",
             "title" => "Exercise Title",
@@ -61,10 +61,14 @@ RSpec.describe "GraphQL, exercises Query", type: :request do
     <<~GQL
       query {
         exercises {
-          description
-          title
-          videoStatus
-          videoUrl
+          edges {
+            node {
+              description
+              title
+              videoStatus
+              videoUrl
+            }
+          }
         }
       }
     GQL
