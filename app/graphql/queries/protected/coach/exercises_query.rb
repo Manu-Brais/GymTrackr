@@ -7,7 +7,7 @@ module Queries
         extend ActiveSupport::Concern
 
         included do
-          field :exercises, [Types::ExerciseType], null: false
+          field :exercises, Types::ExerciseConnectionType, null: false, connection: true
 
           def exercises
             authenticate_user!
