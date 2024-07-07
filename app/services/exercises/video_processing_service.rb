@@ -13,6 +13,8 @@ module Exercises
       yield check_video_status(exercise)
       output_path = yield set_output_path(exercise)
       yield process_video(exercise, @video_path, output_path, @options)
+      thumbnail_path = yield capture_thumbnail(@video_path, exercise)
+      yield attach_thumbnail(exercise, thumbnail_path)
       yield cleanup_tmp_video(@video_path)
       attach_video(exercise, output_path)
     end
@@ -49,6 +51,33 @@ module Exercises
       end
     end
 
+    def capture_thumbnail(input_path, exercise)
+      thumbnail_path = "#{Rails.root}/tmp/thumbnail_#{exercise.id}.jpg"
+      movie = FFMPEG::Movie.new(input_path)
+
+      capture_result = Try[FFMPEG::Error] do
+        movie.screenshot(thumbnail_path, seek_time: 2)
+      end
+
+      capture_result.or { |e| Failure(e) }
+      Success(thumbnail_path)
+    end
+
+    def attach_thumbnail(exercise, thumbnail_path)
+      return Failure("Thumbnail not found.") unless File.exist?(thumbnail_path)
+
+      result = Try[ActiveStorage::FileNotFoundError, ActiveRecord::RecordInvalid] do
+        ActiveRecord::Base.transaction do
+          exercise.thumbnail.attach(io: File.open(thumbnail_path), filename: "thumbnail_#{exercise.id}.jpg")
+          File.delete(thumbnail_path)
+        end
+      end
+
+      result
+        .bind { Success("Thumbnail captured successfully. 📸") }
+        .or { |e| Failure(e) }
+    end
+
     def cleanup_tmp_video(video_path)
       Try[Errno::ENOENT] do
         File.delete(video_path)
@@ -65,7 +94,6 @@ module Exercises
         end
 
         exercise.update!(video_status: :processed)
-        Rails.logger.info("Video processed successfully. 🫡")
       end
 
       result

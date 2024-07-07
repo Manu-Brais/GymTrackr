@@ -11,6 +11,7 @@ RSpec.describe Exercises::VideoProcessingService do
     context "when all steps succeed" do
       before do
         allow(File).to receive(:delete).with(video_path)
+        allow(File).to receive(:delete).with("#{Rails.root}/tmp/thumbnail_#{exercise.id}.jpg")
         allow(File).to receive(:delete).with("#{Rails.root}/tmp/output_#{exercise.id}.mp4").and_call_original
       end
 
