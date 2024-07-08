@@ -26,7 +26,7 @@ RSpec.describe "GraphQL, exercises Query", type: :request do
 
       before do
         create(:exercise, coach: user.authenticatable, video: fixture_file_upload("spec/fixtures/files/sample_video.mp4"))
-        allow(Rails.application.routes.url_helpers).to receive(:rails_blob_path).and_return("videoUrl")
+        allow_any_instance_of(Exercise).to receive(:video_url).and_return("videoUrl")
 
         execute_exercises_query
       end

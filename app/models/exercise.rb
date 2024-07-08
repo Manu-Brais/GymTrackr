@@ -17,6 +17,14 @@ class Exercise < ApplicationRecord
     failed: "failed"
   }
 
+  def video_url
+    Rails.application.routes.url_helpers.rails_blob_url(video, only_path: true) if video.attached?
+  end
+
+  def video_thumbnail_url
+    Rails.application.routes.url_helpers.rails_blob_url(thumbnail, only_path: true) if thumbnail.attached?
+  end
+
   private
 
   def notify_status_change

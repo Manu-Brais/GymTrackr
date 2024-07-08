@@ -5,5 +5,6 @@ module Types
     field :surname, String, null: true
     field :phone, String, null: true
     field :address, String, null: true
+    field :avatar_url, String, null: true
   end
 end
