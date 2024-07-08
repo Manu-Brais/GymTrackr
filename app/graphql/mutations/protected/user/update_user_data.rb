@@ -8,17 +8,19 @@ module Mutations
         argument :surname, String, required: false
         argument :phone, String, required: false
         argument :address, String, required: false
+        argument :profile_picture, ApolloUploadServer::Upload, required: false
 
         field :user_data, Types::UserType, null: false
 
-        def resolve(name: nil, surname: nil, phone: nil, address: nil)
+        def resolve(name: nil, surname: nil, phone: nil, address: nil, profile_picture: nil)
           result = ::Profile::UpdateService.call(
             user_id: current_user.id,
             user_data: {
               name: name,
               surname: surname,
               phone: phone,
-              address: address
+              address: address,
+              picture: profile_picture
             }
           )
 

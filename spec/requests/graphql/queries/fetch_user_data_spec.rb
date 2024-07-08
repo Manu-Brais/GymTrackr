@@ -19,6 +19,11 @@ RSpec.describe "GraphQL, fetch_user_data Query", type: :request do
   context "when the user is logged in" do
     before do
       authenticate_user(user)
+      user.authenticatable.avatar.attach(
+        io: File.open(Rails.root.join("spec", "fixtures", "files", "avatar.jpeg")),
+        filename: "avatar.jpeg",
+        content_type: "image/jpeg"
+      )
       execute_fetch_user_data
     end
 
@@ -34,7 +39,8 @@ RSpec.describe "GraphQL, fetch_user_data Query", type: :request do
             "name" => user.authenticatable.name,
             "surname" => user.authenticatable.surname,
             "phone" => user.authenticatable.phone,
-            "address" => user.authenticatable.address
+            "address" => user.authenticatable.address,
+            "avatarUrl" => user.authenticatable.avatar_url
           }
         })
       end
@@ -52,7 +58,8 @@ RSpec.describe "GraphQL, fetch_user_data Query", type: :request do
             "name" => user.authenticatable.name,
             "surname" => user.authenticatable.surname,
             "phone" => user.authenticatable.phone,
-            "address" => user.authenticatable.address
+            "address" => user.authenticatable.address,
+            "avatarUrl" => user.authenticatable.avatar_url
           }
         })
       end
@@ -72,6 +79,7 @@ RSpec.describe "GraphQL, fetch_user_data Query", type: :request do
               surname
               phone
               address
+              avatarUrl
             }
             ... on Client {
               id
@@ -79,6 +87,7 @@ RSpec.describe "GraphQL, fetch_user_data Query", type: :request do
               surname
               phone
               address
+              avatarUrl
             }
           }
         }

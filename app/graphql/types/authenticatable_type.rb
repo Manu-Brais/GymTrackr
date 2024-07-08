@@ -2,7 +2,7 @@ module Types
   class AuthenticatableType < BaseUnion
     possible_types Types::CoachType, Types::ClientType
 
-    def self.resolve_type(object, context)
+    def self.resolve_type(object, _)
       case object
       when ::Coach
         Types::CoachType
