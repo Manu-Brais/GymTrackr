@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_11_083338) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_13_131759) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -71,6 +72,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_11_083338) do
     t.datetime "updated_at", null: false
     t.uuid "coach_id", null: false
     t.index ["coach_id"], name: "index_exercises_on_coach_id"
+    t.index ["title"], name: "trgm_idx_exercises_on_title", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "referral_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
