@@ -7,12 +7,17 @@ module Queries
         extend ActiveSupport::Concern
 
         included do
-          field :exercises, Types::ExerciseConnectionType, null: false, connection: true
+          field :exercises, Types::ExerciseConnectionType, null: false, connection: true do
+            argument :search, String, required: false
+          end
 
-          def exercises
+          def exercises(search: nil)
             authenticate_user!
             authorize!(current_user, :see_coach_exercises?)
-            current_user.authenticatable.exercises
+
+            exercises = current_user.authenticatable.exercises
+            exercises = exercises.where("title ILIKE ?", "%#{search}%") if search.present?
+            exercises
           end
         end
       end
