@@ -31,7 +31,6 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3.4'
           bundler-cache: true
       - name: Install FFmpeg
         run: sudo apt-get install -y ffmpeg
@@ -52,7 +51,6 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3.4'
           bundler-cache: true
       - name: Lint Ruby files
         run: bundle exec standardrb
