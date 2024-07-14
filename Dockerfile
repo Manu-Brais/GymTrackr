@@ -3,8 +3,8 @@
 # ----------------------------------------------------------------------------------------------------------------------------
 # Base build stage for building gems
 
-ARG RUBY_VERSION=3.3.0
-FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
+ARG RUBY_VERSION=3.3.4
+FROM registry.docker.com/library/ruby:$RUBY_VERSION as base
 
 WORKDIR /rails
 
@@ -17,7 +17,9 @@ RUN apt-get update -qq && \
     build-essential \
     git \
     pkg-config \
-    libpq-dev
+    libpq-dev \
+    libz-dev \
+    dh-autoreconf
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle config set --local frozen false && \
@@ -36,6 +38,8 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
     curl \
     libpq-dev \
+    libz-dev \
+    dh-autoreconf \
     postgresql-client \
     neovim \
     xz-utils && \

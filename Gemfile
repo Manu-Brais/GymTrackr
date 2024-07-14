@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-ruby "3.3.0"
+ruby "3.3.4"
 gem "rails", "~> 7.1.3", ">= 7.1.3.2"
 
 gem "apollo_upload_server"
@@ -15,7 +15,7 @@ gem "propshaft"
 gem "rack-cors"
 gem "solid_queue"
 gem "streamio-ffmpeg"
-gem "tzinfo-data", platforms: %i[windows jruby]
+gem "tzinfo-data"
 gem "ruby-ulid", "~> 0.8.0"
 
 group :development do
@@ -28,7 +28,7 @@ group :test do
 end
 
 group :development, :test do
-  gem "debug", platforms: %i[mri windows]
+  gem "debug"
   gem "factory_bot_rails"
   gem "faker"
   gem "standard"
