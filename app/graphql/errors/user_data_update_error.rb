@@ -1,7 +1,7 @@
 module Errors
   class UserDataUpdateError < GraphQL::ExecutionError
     def initialize(message)
-      super(message)
+      super
     end
   end
 end
