@@ -5,21 +5,22 @@ module Queries
     module Coach
       module GetClientInfoQuery
         extend ActiveSupport::Concern
+        include Dry::Monads[:result, :try]
 
         included do
           field :client, Types::ClientType, null: false do
             argument :id, String, required: true
           end
 
+          # TODO: change authorize policy to see_coach_client?
           def client(id:)
-            authenticate_user!
             authorize!(current_user, :see_coach_clients?)
-            # TODO: change authorize policy to see_coach_client?
-            begin
+
+            Try[ActiveRecord::RecordNotFound] do
               current_user.authenticatable.clients.find(id)
-            rescue ActiveRecord::RecordNotFound => e
+            end.to_result.or do |e|
               raise GraphQL::ExecutionError, e.message
-            end
+            end.value!
           end
         end
       end

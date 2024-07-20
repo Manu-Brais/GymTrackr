@@ -12,12 +12,11 @@ module Queries
           end
 
           def exercises(search: nil)
-            authenticate_user!
             authorize!(current_user, :see_coach_exercises?)
 
-            exercises = current_user.authenticatable.exercises
-            exercises = exercises.where("title ILIKE ?", "%#{search}%") if search.present?
-            exercises
+            return current_user.authenticatable.exercises unless search.present?
+
+            ::Exercise.fuzzy_search(search).where(coach_id: current_user.authenticatable.id)
           end
         end
       end

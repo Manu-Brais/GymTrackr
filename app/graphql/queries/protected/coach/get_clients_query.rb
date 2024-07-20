@@ -7,12 +7,16 @@ module Queries
         extend ActiveSupport::Concern
 
         included do
-          field :clients, [Types::ClientType], null: false
+          field :clients, Types::ClientConnectionType, null: false, connection: true do
+            argument :search, String, required: false
+          end
 
-          def clients
-            authenticate_user!
+          def clients(search: nil)
             authorize!(current_user, :see_coach_clients?)
-            current_user.authenticatable.clients
+
+            return current_coach.clients unless search.present?
+
+            ::Client.fuzzy_search(search).where(coach_id: current_coach.id)
           end
         end
       end

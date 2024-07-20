@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_13_131759) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_20_122328) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -53,6 +53,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_13_131759) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["coach_id"], name: "index_clients_on_coach_id"
+    t.index ["name"], name: "trgm_idx_clients_on_name", opclass: :gin_trgm_ops, using: :gin
+    t.index ["surname"], name: "trgm_idx_clients_on_surname", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "coaches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

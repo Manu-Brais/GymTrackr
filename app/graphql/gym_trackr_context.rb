@@ -33,6 +33,18 @@ class GymTrackrContext < GraphQL::Query::Context
     end
   end
 
+  def current_coach
+    return nil unless current_user&.coach?
+
+    current_user.authenticatable
+  end
+
+  def current_client
+    return nil unless current_user&.client?
+
+    current_user.authenticatable
+  end
+
   def authorize(record, query)
     policy = Pundit.policy!(current_user, record)
     raise Errors::AuthorizationError, "this #{record.class.name.downcase} is not allowed to #{query}" unless policy.public_send(query)

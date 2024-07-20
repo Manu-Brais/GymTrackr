@@ -9,6 +9,7 @@ gem "graphql"
 gem "jwt"
 gem "mission_control-jobs"
 gem "pg"
+gem 'pg_search'
 gem "puma", ">= 5.0"
 gem "pundit"
 gem "propshaft"

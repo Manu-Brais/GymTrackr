@@ -178,6 +178,9 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.6)
+    pg_search (2.3.6)
+      activerecord (>= 5.2)
+      activesupport (>= 5.2)
     propshaft (0.9.0)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -339,6 +342,7 @@ DEPENDENCIES
   jwt
   mission_control-jobs
   pg
+  pg_search
   propshaft
   puma (>= 5.0)
   pundit

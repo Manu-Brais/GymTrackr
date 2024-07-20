@@ -1,4 +1,6 @@
 class Exercise < ApplicationRecord
+  include PgSearch::Model
+
   after_update :notify_status_change, if: :saved_change_to_video_status?
   after_destroy_commit { video.attachment&.purge }
 
@@ -16,6 +18,15 @@ class Exercise < ApplicationRecord
     processed: "processed",
     failed: "failed"
   }
+
+  pg_search_scope :fuzzy_search,
+    against: [:title],
+    using: {
+      tsearch: { prefix: true },
+      trigram: {
+        threshold: 0.3
+      }
+    }
 
   def video_url
     Rails.application.routes.url_helpers.rails_blob_url(video, only_path: true) if video.attached?

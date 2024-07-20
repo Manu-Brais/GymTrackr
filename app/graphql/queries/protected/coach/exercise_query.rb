@@ -12,7 +12,6 @@ module Queries
           end
 
           def exercise(id:)
-            authenticate_user!
             authorize!(current_user, :see_coach_exercises?)
             current_user.authenticatable.exercises.find(id)
           end
