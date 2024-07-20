@@ -26,7 +26,6 @@ RSpec.describe "GraphQL, GetClientsQuery", type: :request do
       first_client_response = clients_data.first.dig("node")
       second_client_response = clients_data.second.dig("node")
 
-
       expect(clients_data.size).to eq(2)
 
       expect(first_client_response["id"]).to eq(first_client.id.to_s)

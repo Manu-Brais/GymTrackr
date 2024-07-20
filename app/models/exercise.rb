@@ -22,7 +22,7 @@ class Exercise < ApplicationRecord
   pg_search_scope :fuzzy_search,
     against: [:title],
     using: {
-      tsearch: { prefix: true },
+      tsearch: {prefix: true},
       trigram: {
         threshold: 0.3
       }
