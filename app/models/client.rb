@@ -5,11 +5,10 @@ class Client < ApplicationRecord
   has_one :user, as: :authenticatable, dependent: :destroy
   has_one_attached :avatar
 
-
   pg_search_scope :fuzzy_search,
     against: [:name, :surname],
     using: {
-      tsearch: { prefix: true },
+      tsearch: {prefix: true},
       trigram: {
         threshold: 0.3
       }
