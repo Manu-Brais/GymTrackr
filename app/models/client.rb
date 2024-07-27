@@ -4,6 +4,7 @@ class Client < ApplicationRecord
   belongs_to :coach
   has_one :user, as: :authenticatable, dependent: :destroy
   has_one_attached :avatar
+  has_many :routines, dependent: :destroy
 
   pg_search_scope :fuzzy_search,
     against: [:name, :surname],

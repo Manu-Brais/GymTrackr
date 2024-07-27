@@ -7,6 +7,7 @@ class Exercise < ApplicationRecord
   has_one_attached :video, dependent: :purge
   has_one_attached :thumbnail
   belongs_to :coach
+  has_many :series, dependent: :destroy
 
   validates :title, presence: true
   validates :video_status, inclusion: {in: %w[initialized enqueued processing processed failed]}

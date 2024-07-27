@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_20_122328) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_27_141608) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -82,6 +82,40 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_20_122328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["coach_id"], name: "index_referral_tokens_on_coach_id"
+  end
+
+  create_table "routine_days", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "order"
+    t.uuid "routine_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["routine_id"], name: "index_routine_days_on_routine_id"
+  end
+
+  create_table "routines", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.date "start_date"
+    t.date "end_date"
+    t.integer "days_per_week"
+    t.uuid "client_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_routines_on_client_id"
+  end
+
+  create_table "series", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "rest_in_minutes"
+    t.integer "rounds"
+    t.integer "min_reps"
+    t.integer "max_reps"
+    t.integer "max_rir"
+    t.integer "min_rir"
+    t.uuid "exercise_id", null: false
+    t.uuid "routine_day_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exercise_id"], name: "index_series_on_exercise_id"
+    t.index ["routine_day_id"], name: "index_series_on_routine_day_id"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -202,6 +236,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_20_122328) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "exercises", "coaches"
   add_foreign_key "referral_tokens", "coaches"
+  add_foreign_key "routine_days", "routines"
+  add_foreign_key "routines", "clients"
+  add_foreign_key "series", "exercises"
+  add_foreign_key "series", "routine_days"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
